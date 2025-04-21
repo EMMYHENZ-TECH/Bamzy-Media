@@ -3,18 +3,9 @@
     "id": "1",
     "name": "Admin User",
     "email": "bamzymediatv@gmail.com",
-    "password": "5f4dcc3b5aa765d61d8327deb882cf99",  
+    "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
     "role": "admin",
-    "balance": null, 
+    "balance": null,
     "joined": "2023-01-01"
-  },
-  {
-    "id": "2",
-    "name": "Test User",
-    "email": "user@example.com",
-    "password": "5f4dcc3b5aa765d61d8327deb882cf99", 
-    "role": "user",
-    "balance": 100,
-    "joined": "2023-01-02"
   }
 ]
