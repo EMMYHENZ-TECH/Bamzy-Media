@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 7860
 // Middleware
 app.use(bodyParser.json({ limit: "50mb" }))
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(express.static(path.join(__dirname, ".")))
+app.use(express.static(path.join(__dirname, "."), { index: false })
 
 // Secret key for JWT
 const JWT_SECRET = "your-secret-key"
