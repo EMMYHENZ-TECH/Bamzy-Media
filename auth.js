@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (token && user) {
     // Redirect based on user role
-    if (window.location.pathname === "/" || window.location.pathname === "/index.html") {
+    if (window.location.pathname === "/" || window.location.pathname === "/login.html") {
       if (user.role === "admin") {
         window.location.href = "/admin.html"
       } else {

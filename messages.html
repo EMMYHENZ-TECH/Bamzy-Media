@@ -299,7 +299,7 @@
             const user = JSON.parse(localStorage.getItem("user") || "{}");
 
             if (!token || !user) {
-                window.location.href = "/index.html";
+                window.location.href = "/login.html";
                 return;
             }
 
@@ -374,7 +374,7 @@
                     e.preventDefault();
                     localStorage.removeItem("token");
                     localStorage.removeItem("user");
-                    window.location.href = "/index.html";
+                    window.location.href = "/login.html";
                 });
             }
 

@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}")
 
   if (!token || !user) {
-    window.location.href = "/index.html"
+    window.location.href = "/login.html"
     return
   }
 
@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.removeItem("cart")
 
     // Redirect to login page
-    window.location.href = "/index.html"
+    window.location.href = "/login.html"
   })
 })
 

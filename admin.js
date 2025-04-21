@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}")
 
   if (!token || !user || user.role !== "admin") {
-    window.location.href = "/index.html"
+    window.location.href = "/login.html"
     return
   }
 
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault()
       localStorage.removeItem("token")
       localStorage.removeItem("user")
-      window.location.href = "/index.html"
+      window.location.href = "/login.html"
     })
   }
 
