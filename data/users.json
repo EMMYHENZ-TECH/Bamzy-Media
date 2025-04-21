@@ -1,1 +1,11 @@
-[{"id":"1","name":"Admin User","email":"bamzymediatv@gmail.com","password":"2a42e12166203eadcfed20b518cd8006235603084a955fb916d706979dfbffc2","role":"admin","balance":null,"joined":"2023-01-01"},{"id":"2","name":"Test User","email":"user@example.com","password":"e606e38b0d8c19b24cf0ee3808183162ea7cd63ff7912dbb22b5e803286b4446","role":"user","balance":100,"joined":"2023-01-02"}]
+[
+  {
+    "id": "1",
+    "name": "Admin User",
+    "email": "bamzymediatv@gmail.com",
+    "password": "2a42e12166203eadcfed20b518cd8006235603084a955fb916d706979dfbffc2",
+    "role": "admin",
+    "balance": null,
+    "joined": "2023-01-01"
+  }
+]
