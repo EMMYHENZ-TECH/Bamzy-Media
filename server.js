@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 7860
 // Middleware
 app.use(bodyParser.json({ limit: "50mb" }))
 app.use(bodyParser.urlencoded({ extended: true }))
-app.use(express.static(path.join(__dirname, "."))
+app.use(express.static(path.join(__dirname, ".")))
 
 // Secret key for JWT
 const JWT_SECRET = "your-secret-key"
@@ -922,7 +922,7 @@ app.post("/api/admin/fund-user", authenticateToken, isAdmin, (req, res) => {
 
 // Serve HTML files
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "login.html"))
+  res.sendFile(path.join(__dirname, "index.html"))
 })
 
 app.get("/dashboard", (req, res) => {
