@@ -56,6 +56,10 @@ if (!fs.existsSync(USERS_FILE)) {
   )
 }
 
+if (!fs.existsSync(ACCOUNTS_FILE)) {
+  fs.writeFileSync(ACCOUNTS_FILE, JSON.stringify([]))
+}
+
 if (!fs.existsSync(TRANSACTIONS_FILE)) {
   fs.writeFileSync(
     TRANSACTIONS_FILE,
@@ -140,7 +144,17 @@ function isAdmin(req, res, next) {
 
 function readDataFile(filePath) {
   try {
+    if (!fs.existsSync(filePath)) {
+      console.error(`File does not exist: ${filePath}`)
+      return []
+    }
+
     const data = fs.readFileSync(filePath, "utf8")
+    if (!data || data.trim() === "") {
+      console.error(`File is empty: ${filePath}`)
+      return []
+    }
+
     return JSON.parse(data)
   } catch (error) {
     console.error(`Error reading file ${filePath}:`, error)
@@ -150,6 +164,10 @@ function readDataFile(filePath) {
 
 function writeDataFile(filePath, data) {
   try {
+    const dirPath = path.dirname(filePath)
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true })
+    }
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
     return true
   } catch (error) {
@@ -625,25 +643,28 @@ app.get("/api/admin/activity", authenticateToken, isAdmin, (req, res) => {
   const recentTransactions = transactions.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)
 
   // Format activity items
-  const activity = recentTransactions.map((transaction) => {
-    const user = users.find((user) => user.id === transaction.userId)
+  const activity = recentTransactions
+    .map((transaction) => {
+      const user = users.find((user) => user.id === transaction.userId)
 
-    if (transaction.type === "fund") {
-      return {
-        type: "user",
-        title: `${user.name} funded their account`,
-        time: transaction.date,
-        amount: transaction.amount,
+      if (transaction.type === "fund") {
+        return {
+          type: "user",
+          title: `${user ? user.name : "Unknown user"} funded their account`,
+          time: transaction.date,
+          amount: transaction.amount,
+        }
+      } else if (transaction.type === "purchase") {
+        return {
+          type: "sale",
+          title: `${user ? user.name : "Unknown user"} purchased an account`,
+          time: transaction.date,
+          amount: transaction.amount,
+        }
       }
-    } else if (transaction.type === "purchase") {
-      return {
-        type: "sale",
-        title: `${user.name} purchased an account`,
-        time: transaction.date,
-        amount: transaction.amount,
-      }
-    }
-  })
+      return null
+    })
+    .filter((item) => item !== null)
 
   // Add recent account additions
   const recentAccounts = accounts.sort((a, b) => Number.parseInt(b.id) - Number.parseInt(a.id)).slice(0, 3)
@@ -711,18 +732,55 @@ app.get("/api/admin/transactions", authenticateToken, isAdmin, (req, res) => {
 })
 
 app.get("/api/admin/users", authenticateToken, isAdmin, (req, res) => {
-  const users = readDataFile(USERS_FILE)
+  console.log("Fetching users from:", USERS_FILE)
+  try {
+    // Check if file exists
+    if (!fs.existsSync(USERS_FILE)) {
+      console.log("Users file does not exist, creating it...")
+      const defaultUsers = [
+        {
+          id: "1",
+          name: "Admin User",
+          email: "bamzymediatv@gmail.com",
+          password: hashPassword("babcute1000"),
+          role: "admin",
+          balance: Number.POSITIVE_INFINITY,
+          joined: "2023-01-01",
+        },
+        {
+          id: "2",
+          name: "Test User",
+          email: "user@example.com",
+          password: hashPassword("user123"),
+          role: "user",
+          balance: 100,
+          joined: "2023-01-02",
+        },
+      ]
+      writeDataFile(USERS_FILE, defaultUsers)
+    }
 
-  // Format users (remove passwords)
-  const formattedUsers = users.map((user) => {
-    const { password, ...userData } = user
-    return userData
-  })
+    const users = readDataFile(USERS_FILE)
+    console.log("Users found:", users.length)
 
-  return res.json({
-    success: true,
-    users: formattedUsers,
-  })
+    // Format users (remove passwords)
+    const formattedUsers = users.map((user) => {
+      const { password, ...userData } = user
+      return userData
+    })
+
+    return res.json({
+      success: true,
+      users: formattedUsers,
+    })
+  } catch (error) {
+    console.error("Error in /api/admin/users:", error)
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching users",
+      error: error.message,
+    })
+  }
 })
 
 // Purchases routes
