@@ -616,6 +616,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const usersTableBody = document.getElementById("usersTableBody")
     if (!usersTableBody) return
 
+    // Show loading state
+    usersTableBody.innerHTML = '<tr><td colspan="6">Loading users...</td></tr>'
+
     // Fetch users from server
     fetch("/api/admin/users", {
       method: "GET",
@@ -623,8 +626,15 @@ document.addEventListener("DOMContentLoaded", () => {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`)
+        }
+        return response.json()
+      })
       .then((data) => {
+        console.log("Users data:", data) // Debug log
+
         if (data.success && data.users) {
           const users = data.users
 
@@ -639,25 +649,25 @@ document.addEventListener("DOMContentLoaded", () => {
             const row = document.createElement("tr")
 
             row.innerHTML = `
-                        <td>${user.id}</td>
-                        <td>${user.name}</td>
-                        <td>${user.email}</td>
-                        <td>${user.balance === Number.POSITIVE_INFINITY ? "∞" : `₦${user.balance.toFixed(2)}`}</td>
-                        <td>${user.joined}</td>
-                        <td>
-                            <div class="table-actions">
-                                <button class="edit-user-btn" data-id="${user.id}">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="delete-user-btn" data-id="${user.id}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                                <button class="message-user-btn" data-id="${user.id}" data-name="${user.name}">
-                                    <i class="fas fa-envelope"></i>
-                                </button>
-                            </div>
-                        </td>
-                    `
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.balance === Number.POSITIVE_INFINITY ? "∞" : `₦${user.balance.toFixed(2)}`}</td>
+            <td>${user.joined}</td>
+            <td>
+              <div class="table-actions">
+                <button class="edit-user-btn" data-id="${user.id}">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="delete-user-btn" data-id="${user.id}">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <button class="message-user-btn" data-id="${user.id}" data-name="${user.name}">
+                  <i class="fas fa-envelope"></i>
+                </button>
+              </div>
+            </td>
+          `
 
             usersTableBody.appendChild(row)
           })
@@ -688,13 +698,21 @@ document.addEventListener("DOMContentLoaded", () => {
             })
           })
         } else {
-          usersTableBody.innerHTML = '<tr><td colspan="6">Failed to load users.</td></tr>'
+          usersTableBody.innerHTML =
+            '<tr><td colspan="6">Failed to load users. Server response: ' + JSON.stringify(data) + "</td></tr>"
         }
       })
       .catch((error) => {
         console.error("Error:", error)
-        usersTableBody.innerHTML = '<tr><td colspan="6">An error occurred. Please try again.</td></tr>'
+        usersTableBody.innerHTML = '<tr><td colspan="6">An error occurred: ' + error.message + "</td></tr>"
       })
+  }
+
+  // Helper function to format numbers with commas if it doesn't exist
+  if (typeof formatNumber !== "function") {
+    function formatNumber(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    }
   }
 
   // Function to edit account
