@@ -1,11 +1,11 @@
 [
   {
-    "id": "1",
-    "name": "Admin User",
+    "id": "1745617886561",
+    "name": "Admin",
     "email": "bamzymediatv@gmail.com",
     "password": "2a42e12166203eadcfed20b518cd8006235603084a955fb916d706979dfbffc2",
     "role": "admin",
-    "balance": null,
-    "joined": "2023-01-01"
+    "balance": 0,
+    "joined": "2025-04-25"
   }
 ]
